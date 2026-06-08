@@ -4,18 +4,17 @@
   "subjects": [
     {
       "id": "internal-medicine",
-      "name": "内科学",
-      "icon": "内",
+      "name": "预防医学",
+      "icon": "预防",
       "enabled": true,
       "announcements": [
         {
           "id": "int-10-001",
-          "title": "简答题：COPD 诊断标准",
-          "content": "吸入支气管舒张剂后，FEV1/FVC < 70% 即可确定存在持续气流受限。注意十版教材对 GOLD 分级的调整。",
+          "title": "简答题+论述题",
+          "content": "根据老师课上讲解的重点整理而成，覆盖率可达95%，有意者加V：",
           "publishedAt": "2026-06-08",
           "pinned": true,
           "tags": [
-            "呼吸系统",
             "考点"
           ],
           "enabled": true,
@@ -24,8 +23,8 @@
         },
         {
           "id": "int-10-002",
-          "title": "论述题：心力衰竭的药物治疗",
-          "content": "重点论述“新四联”方案：ARNI/ACEI/ARB、β受体阻滞剂、MRA 及 SGLT2i 的作用机制及联用原则。",
+          "title": "空",
+          "content": "暂无",
           "publishedAt": "2026-06-07",
           "pinned": false,
           "tags": [
@@ -46,8 +45,8 @@
       "announcements": [
         {
           "id": "sur-10-001",
-          "title": "简答题：低钾血症的临床表现",
-          "content": "最早出现肌无力（先四肢后躯干），并可有心电图改变（U波出现、T波平坦）。补钾需遵循“见尿补钾”原则。",
+          "title": "简答+论述",
+          "content": "根据PPT及课上重点整理，有意者加V：",
           "publishedAt": "2026-06-08",
           "pinned": true,
           "tags": [
@@ -60,13 +59,47 @@
         },
         {
           "id": "sur-10-002",
-          "title": "论述题：腹股沟斜疝与直疝的鉴别",
-          "content": "从发病年龄、突出途径、与腹壁下动脉关系、压迫深环后的表现以及疝块形状五个维度进行对比。",
+          "title": "暂无",
+          "content": "空",
           "publishedAt": "2026-06-05",
           "pinned": false,
           "tags": [
-            "普外",
-            "对比记忆"
+            "空"
+          ],
+          "enabled": true,
+          "link": "",
+          "linkText": "查看详情"
+        }
+      ]
+    },
+    {
+      "id": "handbook",
+      "name": "使用说明-V:dr-yym9985",
+      "icon": "教学",
+      "enabled": true,
+      "announcements": [
+        {
+          "id": "hand-10-001",
+          "title": "手册",
+          "content": "本网址模仿考试出题的随机抽取，适合有该习惯的同学用于自测和加深印象。无后端，不用担心隐私泄露所有题库信息除使用者该设备的该浏览器打开外均不可见；支持通过手动打字制作题库和文件导入共同完成题库设置，然后可以将题目进行章节设置，抽题时可以指定章节进行抽题；抽题后打开考试界面可以根据实际情况打上错误标签，标签次数可以累积，使用者可以勾选在错题中加权重复抽取，以加深印象；此外可以将自制的题库导出用于朋友之间相互传播使用",
+          "publishedAt": "2026-06-08",
+          "pinned": true,
+          "tags": [
+            "大体使用方法",
+            "参考"
+          ],
+          "enabled": true,
+          "link": "",
+          "linkText": "查看详情"
+        },
+        {
+          "id": "hand-10-002",
+          "title": "公告位购置",
+          "content": "使用人数达到一定数量时开启公告栏功能，网页创作者将定期更新公告栏，使用者可以根据公告中资料拥有者联系方式进行获取。每月会随机抽取一定使用者免费提供公告栏位置",
+          "publishedAt": "2026-06-05",
+          "pinned": true,
+          "tags": [
+            "空"
           ],
           "enabled": true,
           "link": "",
@@ -78,17 +111,16 @@
       "id": "diagnostics",
       "name": "诊断学",
       "icon": "诊",
-      "enabled": true,
+      "enabled": false,
       "announcements": [
         {
           "id": "dia-10-001",
-          "title": "简答题：湿啰音的听诊特点",
-          "content": "断续而短暂，多见于吸气时，部位较恒定，性质不易变，咳嗽后可减轻或消失。",
+          "title": "空",
+          "content": "暂无",
           "publishedAt": "2026-06-06",
           "pinned": true,
           "tags": [
-            "技能操作",
-            "肺部听诊"
+            "空"
           ],
           "enabled": true,
           "link": "",
@@ -96,13 +128,12 @@
         },
         {
           "id": "dia-10-002",
-          "title": "论述题：典型心肌梗死的心电图演变",
-          "content": "描述超急性期（T波高尖）、急性期（ST段弓背向上抬高）、亚急性期及慢性期的图形动态变化特征。",
+          "title": "空",
+          "content": "暂无",
           "publishedAt": "2026-06-04",
           "pinned": false,
           "tags": [
-            "心电图",
-            "影像诊断"
+            "空"
           ],
           "enabled": true,
           "link": "",

@@ -106,8 +106,27 @@
           "linkText": "查看详情"
         }
       ]
-    },
+    }, 
     {
+      "id": "bug",
+      "name": "bug说明-V:dr-yym9985",
+      "icon": "教学",
+      "enabled": true,
+      "announcements": [
+        {
+          "id": "bug-10-001",
+          "title": "bug",
+          "content": "每到题的题目和答案中不要出现同样的序号如1./2.等，会被错误的识别为题目导致混乱",
+          "publishedAt": "2026-06-08",
+          "pinned": true,
+          "tags": [
+            "bug"
+          ],
+          "enabled": true,
+          "link": "",
+          "linkText": "查看详情"
+        },
+        {
       "id": "diagnostics",
       "name": "诊断学",
       "icon": "诊",

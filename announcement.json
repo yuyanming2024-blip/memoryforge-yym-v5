@@ -1,21 +1,102 @@
 {
-  "updatedAt": "2026-06-08T12:00:00+08:00",
-  "items": [
+  "schemaVersion": 2,
+  "updatedAt": "2026-06-08T14:30:00+08:00",
+  "subjects": [
     {
-      "id": "notice-001",
-      "title": "欢迎使用 MemoryForge 智能背诵题库 v5.1",
-      "content": "公告系统已正常运行！\n以后只需要修改这个 announcement.json 文件，就能实时更新公告内容。",
+      "id": "internal-medicine",
+      "name": "内科学",
+      "icon": "内",
       "enabled": true,
-      "link": "",
-      "linkText": "查看详情"
+      "announcements": [
+        {
+          "id": "int-10-001",
+          "title": "简答题资料",
+          "content": "暂无",
+          "publishedAt": "2026-06-08",
+          "pinned": true,
+          "tags": [
+            "呼吸系统",
+            "重点考点"
+          ],
+          "enabled": true
+        },
+        {
+          "id": "int-10-002",
+          "title": "论述题资料",
+          "content": "暂无",
+          "publishedAt": "2026-06-07",
+          "pinned": false,
+          "tags": [
+            "心血管",
+            "指南更新"
+          ],
+          "enabled": true
+        }
+      ]
     },
     {
-      "id": "notice-002",
-      "title": "使用小贴士",
-      "content": "题库数据保存在浏览器本地，不会上传到服务器。\n建议定期导出题库备份。",
+      "id": "surgery",
+      "name": "外科学",
+      "icon": "外",
       "enabled": true,
-      "link": "",
-      "linkText": "了解更多"
-    }
+      "announcements": [
+        {
+          "id": "sur-10-001",
+          "title": "简答题资料",
+          "content": "暂无",
+          "publishedAt": "2026-06-08",
+          "pinned": true,
+          "tags": [
+            "外总",
+            "必背"
+          ],
+          "enabled": true
+        },
+        {
+          "id": "sur-10-002",
+          "title": "论述题资料",
+          "content": "暂无",
+          "publishedAt": "2026-06-05",
+          "pinned": false,
+          "tags": [
+            "普外",
+            "解剖对照"
+          ],
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "id": "diagnostics",
+      "name": "诊断学",
+      "icon": "诊",
+      "enabled": true,
+      "announcements": [
+        {
+          "id": "dia-10-001",
+          "title": "简答题资料",
+          "content": "暂无",
+          "publishedAt": "2026-06-06",
+          "pinned": true,
+          "tags": [
+            "技能操做",
+            "体格检查"
+          ],
+          "enabled": true
+        },
+        {
+          "id": "dia-10-002",
+          "title": "论述题资料",
+          "content": "暂无",
+          "publishedAt": "2026-06-04",
+          "pinned": false,
+          "tags": [
+            "心电图",
+            "影像诊断"
+          ],
+          "enabled": true
+        }
+      ]
+    },
   ]
 }

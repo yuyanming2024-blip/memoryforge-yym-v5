@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark light" />
+  <title>MemoryForge v5.2 智能背诵题库｜网页作者：109期10班 YYM</title>
+  <style>
+    :root{
+      --bg:#0b1020;--panel:#121a2d;--panel2:#182238;--line:rgba(255,255,255,.09);
+      --text:#eef3ff;--muted:#9ba8c2;--brand:#7c9cff;--brand2:#9d7cff;
+      --ok:#4fd1a1;--warn:#ffbf69;--bad:#ff7b8b;--shadow:0 20px 60px rgba(0,0,0,.32);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:
+      radial-gradient(circle at 18% 0%,rgba(124,156,255,.15),transparent 33%),
+      radial-gradient(circle at 85% 5%,rgba(157,124,255,.12),transparent 30%),var(--bg);color:var(--text);min-height:100vh}
+    button,input,textarea,select{font:inherit}
+    button{cursor:pointer}
+    .shell{max-width:1480px;margin:auto;padding:24px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-bottom:18px}
+    .brand h1{font-size:26px;margin:0 0 6px;letter-spacing:.2px}.brand p{margin:0;color:var(--muted);font-size:14px}
+    .author{padding:10px 14px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:999px;color:#dfe7ff;font-size:13px;white-space:nowrap}
+    .announcement{border:1px solid rgba(124,156,255,.28);background:linear-gradient(135deg,rgba(124,156,255,.13),rgba(157,124,255,.07));border-radius:var(--radius);padding:16px 18px;margin-bottom:18px;box-shadow:var(--shadow)}
+    .announce-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+    .announce-title{font-weight:750;font-size:16px}.announce-meta{font-size:12px;color:var(--muted)}
+    .announce-content{color:#d9e2f8;line-height:1.75;white-space:pre-wrap}.announce-items{display:grid;gap:10px}
+    .announce-item{padding:12px 14px;background:rgba(8,13,26,.26);border:1px solid var(--line);border-radius:14px}
+    .announce-item h3{font-size:15px;margin:0 0 6px}.announce-item p{margin:0;color:#d6def0;line-height:1.65;white-space:pre-wrap}
+    .layout{display:grid;grid-template-columns:290px 1fr;gap:18px}
+    .panel{background:rgba(18,26,45,.92);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .sidebar{padding:16px;min-height:680px}.main{padding:18px;min-width:0}
+    .side-head,.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .side-head h2,.section-head h2{font-size:16px;margin:0}.muted{color:var(--muted)}
+    .btn{border:1px solid var(--line);color:var(--text);background:#1a2540;padding:10px 14px;border-radius:12px;transition:.2s}
+    .btn:hover{transform:translateY(-1px);background:#223052}.btn.primary{border:0;background:linear-gradient(135deg,var(--brand),var(--brand2));color:white;font-weight:700}
+    .btn.danger{color:#ffdbe0;background:rgba(255,123,139,.11);border-color:rgba(255,123,139,.24)}
+    .btn.ghost{background:transparent}.btn.small{padding:7px 10px;font-size:12px;border-radius:10px}
+    .bank-list{display:grid;gap:9px;margin-top:14px}.bank-item{padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.025)}
+    .bank-item.active{border-color:rgba(124,156,255,.55);background:rgba(124,156,255,.11)}
+    .bank-item button{all:unset;cursor:pointer;display:block;width:100%}.bank-name{font-weight:700;margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .bank-meta{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.tab{padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted)}
+    .tab.active{background:rgba(124,156,255,.16);color:#fff;border-color:rgba(124,156,255,.4)}
+    .view{display:none}.view.active{display:block}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .field{display:grid;gap:7px}.field label{font-size:13px;color:#c5cee2}.input,.textarea,.select{width:100%;border:1px solid var(--line);background:#0e1628;color:var(--text);border-radius:12px;padding:11px 12px;outline:none}
+    .input:focus,.textarea:focus,.select:focus{border-color:rgba(124,156,255,.6);box-shadow:0 0 0 3px rgba(124,156,255,.1)}
+    .textarea{min-height:130px;resize:vertical;line-height:1.65}.help{font-size:12px;color:var(--muted);line-height:1.6}
+    .card{border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025);padding:14px}
+    .dropzone{border:1px dashed rgba(124,156,255,.45);border-radius:16px;padding:18px;text-align:center;background:rgba(124,156,255,.055)}
+    .actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center}.space{height:14px}
+    .draft-list,.question-list{display:grid;gap:12px;margin-top:14px;max-height:740px;overflow:auto;padding-right:4px}
+    .qcard{border:1px solid var(--line);border-radius:16px;background:#10192c;padding:14px}
+    .qtop{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.qindex{font-size:13px;color:#aeb9d0;font-weight:700}
+    .qgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.qgrid textarea{min-height:105px}
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0}
+    .stat{padding:14px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}.stat b{display:block;font-size:24px;margin-top:6px}.stat span{font-size:12px;color:var(--muted)}
+    .studybox{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.progress{height:10px;background:#0b1324;border:1px solid var(--line);border-radius:999px;overflow:hidden}.progress>div{height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));width:0}
+    .range-line{display:grid;grid-template-columns:1fr 86px;gap:10px;align-items:center}.source-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.source-pill{display:flex;gap:7px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);font-size:12px}
+    .empty{padding:42px 18px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
+    .notice{font-size:12px;line-height:1.7;color:#b8c3d9;background:rgba(255,191,105,.08);border:1px solid rgba(255,191,105,.18);padding:11px 12px;border-radius:12px}
+    .mode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .check-pill{display:flex;align-items:flex-start;gap:8px;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);font-size:13px;line-height:1.45}
+    .check-pill input{margin-top:2px;accent-color:var(--brand)}
+    .punctuation-grid{display:flex;flex-wrap:wrap;gap:7px}
+    .punctuation-item{display:flex;align-items:center;gap:5px;padding:7px 9px;border:1px solid var(--line);border-radius:10px;background:#0e1628;font-size:13px}
+    .chapter-toolbar{margin-top:14px;padding:13px;border:1px solid rgba(124,156,255,.22);border-radius:16px;background:rgba(124,156,255,.055)}
+    .chapter-toolbar-grid{display:grid;grid-template-columns:150px 1fr auto;gap:9px;align-items:end}
+    .chapter-badge{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:5px 8px;border-radius:999px;background:rgba(124,156,255,.12);border:1px solid rgba(124,156,255,.22);color:#ced8ff;font-size:12px}
+    .chapter-filter{display:grid;gap:7px;max-height:250px;overflow:auto;padding:4px 2px}
+    .chapter-filter-row{display:flex;align-items:center;gap:8px;padding:8px 9px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.02);font-size:13px}
+    .chapter-filter-row input{accent-color:var(--brand)}
+    .chapter-filter-row .count{margin-left:auto;color:var(--muted);font-size:12px}
+    .chapter-filter-row .chapter-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .chapter-pool-info{font-size:12px;color:var(--muted);margin-top:8px}
+    @media(max-width:720px){.mode-grid{grid-template-columns:1fr}.chapter-toolbar-grid{grid-template-columns:1fr}}
+    .modal{position:fixed;inset:0;background:rgba(2,6,14,.74);display:none;align-items:center;justify-content:center;padding:20px;z-index:99}.modal.show{display:flex}
+    .modal-box{width:min(960px,96vw);max-height:90vh;overflow:auto;background:#10182a;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow)}
+    .modal pre{white-space:pre-wrap;word-break:break-word;line-height:1.7;color:#dce5f7}
+    .footer{padding:18px 4px 4px;color:var(--muted);font-size:12px;text-align:center}
+    @media(max-width:980px){.layout{grid-template-columns:1fr}.sidebar{min-height:auto}.grid-2,.studybox{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:640px){.shell{padding:12px}.topbar{align-items:flex-start;flex-direction:column}.grid-3,.qgrid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.main,.sidebar{padding:13px}.author{white-space:normal}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <h1>MemoryForge 智能背诵题库</h1>
+      <p>识别题目与答案 · 随机自测 · 错题强化 · 本地隐私存储</p>
+    </div>
+    <div class="author">网页作者：109期10班 YYM</div>
+  </header>
+
+  <section class="announcement">
+    <div class="announce-head">
+      <div class="announce-title">公告栏</div>
+      <div class="actions">
+        <span id="announceStatus" class="announce-meta">正在读取公告…</span>
+        <button class="btn small ghost" onclick="loadAnnouncements(true)">刷新</button>
+      </div>
+    </div>
+    <div id="announcementContent" class="announce-content">欢迎使用 MemoryForge。</div>
+  </section>
+
+  <div class="layout">
+    <aside class="panel sidebar">
+      <div class="side-head">
+        <h2>我的题库</h2>
+        <button class="btn small" onclick="switchTab('import')">新建</button>
+      </div>
+      <div id="bankList" class="bank-list"></div>
+      <div class="space"></div>
+      <div class="notice">
+        题库、答案、错题次数、覆盖率和原文件均保存在当前设备的当前浏览器中，不会上传到公告地址；其他设备或浏览器看不到这些数据。
+      </div>
+      <div class="space"></div>
+      <div class="actions">
+        <button class="btn small" onclick="document.getElementById('importJson').click()">导入题库</button>
+        <button class="btn small danger" onclick="clearAllData()">清空本机数据</button>
+        <input id="importJson" type="file" accept=".json,.mfbank.json" hidden onchange="importBankJson(event)" />
+      </div>
+    </aside>
+
+    <main class="panel main">
+      <nav class="tabs">
+        <button class="tab active" data-tab="import" onclick="switchTab('import')">导入与新建</button>
+        <button class="tab" data-tab="study" onclick="switchTab('study')">抽题与进度</button>
+        <button class="tab" data-tab="editor" onclick="switchTab('editor')">题库编辑</button>
+      </nav>
+
+      <section id="view-import" class="view active">
+        <div class="section-head"><h2>创建或补充题库</h2><span class="muted" id="draftCount">暂存 0 题</span></div>
+        <div class="space"></div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="field">
+              <label>题库名称</label>
+              <input id="newBankName" class="input" placeholder="例如：历史必背知识点" />
+            </div>
+            <div class="space"></div>
+            <div class="dropzone">
+              <input id="fileInput" type="file" multiple accept=".pdf,.docx,.txt,.md" />
+              <div class="help" style="margin-top:8px">支持 PDF、DOCX、TXT、MD。先按序号分题，再仅取第一段为题目；答案标记、后续段落和明显答案行会放入预存答案。</div>
+            </div>
+            <div class="space"></div>
+            <div class="field">
+              <label>识别模式（可同时启用多种，按可靠程度依次判断）</label>
+              <div class="mode-grid">
+                <label class="check-pill"><input id="modeAnswerMarker" type="checkbox" checked><span><b>答案标记分隔</b><br><span class="muted">识别“答案、参考答案、解析、解答”等标记</span></span></label>
+                <label class="check-pill"><input id="modeParagraph" type="checkbox" checked><span><b>首段识别</b><br><span class="muted">第一个空行前的完整段落作为题目</span></span></label>
+                <label class="check-pill"><input id="modeSemanticLine" type="checkbox" checked><span><b>答案起始词判断</b><br><span class="muted">根据“因为、因此、首先”等判断答案开始</span></span></label>
+                <label class="check-pill"><input id="modePunctuation" type="checkbox" checked><span><b>题末标点截断</b><br><span class="muted">在你勾选的标点后结束题目</span></span></label>
+                <label class="check-pill"><input id="modeFirstLine" type="checkbox" checked><span><b>首行保守模式</b><br><span class="muted">其他方式无法判断时，只取首行为题目</span></span></label>
+              </div>
+            </div>
+            <div class="space"></div>
+            <div class="field">
+              <label>题目结束标点（可多选）</label>
+              <div class="punctuation-grid">
+                <label class="punctuation-item"><input class="end-punctuation" type="checkbox" value="？" checked>？</label>
+                <label class="punctuation-item"><input class="end-punctuation" type="checkbox" value="?" checked>?</label>
+                <label class="punctuation-item"><input class="end-punctuation" type="checkbox" value="：" checked>：</label>
+                <label class="punctuation-item"><input class="end-punctuation" type="checkbox" value=":">:</label>
+                <label class="punctuation-item"><input class="end-punctuation" type="checkbox" value="。">。</label>
+                <label class="punctuation-item"><input class="end-punctuation" type="checkbox" value="！">！</label>
+                <label class="punctuation-item"><input class="end-punctuation" type="checkbox" value="!">!</label>
+                <label class="punctuation-item"><input class="end-punctuation" type="checkbox" value="；">；</label>
+                <label class="punctuation-item"><input class="end-punctuation" type="checkbox" value=";">;</label>
+              </div>
+              <input id="customEndPunctuation" class="input" placeholder="其他自定义结束符号，例如：…】）" />
+              <div class="help">只在开启“题末标点截断”时生效。系统会选择最早出现的已选标点作为题目结尾，后面的文字进入答案。</div>
+            </div>
+            <div class="space"></div>
+            <button class="btn primary" onclick="parseSelectedFiles()">识别所选文件</button>
+          </div>
+
+          <div class="card">
+            <div class="field">
+              <label>手动输入题目与答案</label>
+              <textarea id="manualText" class="textarea" placeholder="示例：
+1. 中国近代史的开端事件是什么？
+
+答案：鸦片战争。
+
+2. 第二题内容
+第二题答案内容"></textarea>
+              <div class="help">文件识别和手动输入可同时使用，并共用左侧勾选的识别模式与题末标点。无序号时可用“题目：/答案：”或一行一题。</div>
+            </div>
+            <div class="space"></div>
+            <div class="actions">
+              <button class="btn" onclick="parseManualText()">加入手动内容</button>
+              <button class="btn ghost" onclick="addBlankDraft()">添加空白题</button>
+              <button class="btn danger ghost" onclick="clearDraft()">清空暂存</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="space"></div>
+        <div class="section-head">
+          <h2>识别暂存区（可完整编辑）</h2>
+          <div class="actions">
+            <button class="btn" onclick="saveDraftAsNewBank()">保存为新题库</button>
+            <button class="btn primary" onclick="mergeDraftIntoActive()">追加到当前题库</button>
+          </div>
+        </div>
+        <div class="chapter-toolbar">
+          <div class="section-head">
+            <div>
+              <b>批量设置章节 / 小节</b>
+              <div class="help">先勾选暂存题目，再指定层级编号。编号支持 1、1.1、1.1.1 等形式，同一题库内可包含任意数量的章节和小节。</div>
+            </div>
+            <div class="actions">
+              <button class="btn small ghost" onclick="selectAllDraftQuestions(true)">全选题目</button>
+              <button class="btn small ghost" onclick="selectAllDraftQuestions(false)">取消全选</button>
+            </div>
+          </div>
+          <div class="space"></div>
+          <div class="chapter-toolbar-grid">
+            <div class="field">
+              <label>章节编号</label>
+              <input id="batchChapterPath" class="input" placeholder="例如 1.1.1" />
+            </div>
+            <div class="field">
+              <label>章节名称</label>
+              <input id="batchChapterTitle" class="input" placeholder="例如 第一章·基础概念" />
+            </div>
+            <div class="actions">
+              <button class="btn primary" onclick="applyChapterToSelectedDrafts()">应用到勾选题目</button>
+              <button class="btn danger ghost" onclick="clearChapterFromSelectedDrafts()">移除章节</button>
+            </div>
+          </div>
+        </div>
+        <div id="draftList" class="draft-list"></div>
+      </section>
+
+      <section id="view-study" class="view">
+        <div id="studyEmpty" class="empty">请先创建或选择一个题库。</div>
+        <div id="studyContent" style="display:none">
+          <div class="section-head">
+            <div>
+              <h2 id="studyBankName">题库</h2>
+              <div class="muted" style="font-size:12px;margin-top:5px">抽题后会自动打开一个简洁的新网页，仅显示本次题目。</div>
+            </div>
+            <div class="actions">
+              <button class="btn small" onclick="exportActiveBank()">导出题库</button>
+              <button class="btn small danger" onclick="deleteActiveBank()">删除题库</button>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><span>题目总数</span><b id="statTotal">0</b></div>
+            <div class="stat"><span>覆盖率</span><b id="statCoverage">0%</b></div>
+            <div class="stat"><span>尚未抽到</span><b id="statRemaining">0</b></div>
+            <div class="stat"><span>累计错误次数</span><b id="statWrong">0</b></div>
+          </div>
+          <div class="progress"><div id="coverageBar"></div></div>
+          <div class="space"></div>
+
+          <div class="studybox">
+            <div class="card">
+              <div class="field">
+                <div class="section-head">
+                  <label>专项训练范围（可多选章节 / 小节）</label>
+                  <div class="actions">
+                    <button class="btn small ghost" onclick="setAllChapterFilters(true)">全部选择</button>
+                    <button class="btn small ghost" onclick="setAllChapterFilters(false)">全部取消</button>
+                  </div>
+                </div>
+                <div id="chapterFilters" class="chapter-filter"></div>
+                <div id="chapterPoolInfo" class="chapter-pool-info"></div>
+              </div>
+              <div class="space"></div>
+              <div class="grid-2">
+                <div class="field">
+                  <label>本次抽取数量</label>
+                  <input id="drawCount" class="input" type="number" min="1" value="10" />
+                </div>
+                <div class="field">
+                  <label>优先抽取未覆盖题目</label>
+                  <select id="preferUnseen" class="select">
+                    <option value="yes">开启</option>
+                    <option value="no">关闭</option>
+                  </select>
+                </div>
+              </div>
+              <div class="space"></div>
+              <div class="field">
+                <label>错题强化比例：<span id="wrongRatioLabel">33%</span></label>
+                <div class="range-line">
+                  <input id="wrongRatioRange" type="range" min="0" max="100" value="33" oninput="syncWrongRatio(this.value)" />
+                  <input id="wrongRatioNumber" class="input" type="number" min="0" max="100" value="33" oninput="syncWrongRatio(this.value)" />
+                </div>
+                <div class="help">例如抽 10 题、比例 40%，会尝试按错误次数权重抽约 4 道错题；错题不足时由其他题补足。</div>
+              </div>
+              <div class="space"></div>
+              <div class="actions">
+                <button class="btn primary" onclick="drawQuiz()">抽取并打开答题页</button>
+                <button class="btn" onclick="resetCoverage()">重置覆盖率</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 style="margin-top:0">原文件</h3>
+              <div class="help">PDF 通常可直接在浏览器打开；DOCX 若浏览器不支持预览，会自动下载。也可查看解析后的原文文本。</div>
+              <div id="sourceFiles" class="source-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-editor" class="view">
+        <div id="editorEmpty" class="empty">请先创建或选择一个题库。</div>
+        <div id="editorContent" style="display:none">
+          <div class="section-head">
+            <div>
+              <h2 id="editorBankName">题库编辑</h2>
+              <div class="muted" style="font-size:12px;margin-top:5px">题目、答案和错误次数均可修改。</div>
+            </div>
+            <div class="actions">
+              <button class="btn" onclick="addQuestionToActive()">新增题目</button>
+              <button class="btn primary" onclick="saveEditorChanges()">保存全部修改</button>
+            </div>
+          </div>
+          <div id="questionList" class="question-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div class="footer">MemoryForge v5.2 · 网页作者：109期10班 YYM</div>
+</div>
+
+<div id="textModal" class="modal" onclick="closeModalOnBackdrop(event)">
+  <div class="modal-box">
+    <div class="section-head">
+      <h2 id="modalTitle">原文文本</h2>
+      <button class="btn small" onclick="closeTextModal()">关闭</button>
+    </div>
+    <pre id="modalText"></pre>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+<script>
+const APP_CONFIG = {
+  // 部署网页时，把 announcement.json 与本 HTML 放在同一目录即可。
+  // 也可以改成完整公网地址，例如：https://example.com/announcement.json
+  announcementUrl: "./announcement.json",
+  announcementPollMs: 60000
+};
+
+const STORAGE_KEY = "memoryforge_yym_v5"; // 与 v5.1 共用本地数据，自动兼容新增章节字段
+const DB_NAME = "memoryforge_yym_files";
+const DB_STORE = "files";
+const FALLBACK_ANNOUNCEMENT = {
+  updatedAt: "2026-06-08",
+  items: [{
+    title: "欢迎使用 MemoryForge",
+    content: "当前为离线默认公告。将 announcement.json 与网页一起部署后，所有用户刷新页面即可看到你发布的新公告。",
+    enabled: true
+  }]
+};
+
+let state = loadState();
+let draftItems = [];
+let draftSelection = new Set();
+let chapterFilterState = {bankId:null,selected:new Set()};
+let pendingSourceFiles = new Map();
+let dbPromise = null;
+
+function uid(prefix="id"){
+  return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,9);
+}
+function escapeHtml(value=""){
+  return String(value).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+}
+function loadState(){
+  try{
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if(data && Array.isArray(data.banks)){
+      data.version=5.2;
+      data.banks.forEach(bank=>{
+        bank.questions=Array.isArray(bank.questions)?bank.questions.map(normalizeQuestion):[];
+        refreshBankChapters(bank);
+      });
+      return data;
+    }
+  }catch(e){}
+  return {version:5.2,banks:[],activeBankId:null};
+}
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+function getActiveBank(){
+  return state.banks.find(b => b.id === state.activeBankId) || null;
+}
+function normalizeQuestion(q){
+  return {
+    id:q.id || uid("q"),
+    question:String(q.question || "").trim(),
+    answer:String(q.answer || "").trim(),
+    wrongCount:Math.max(0, Number(q.wrongCount || 0)),
+    covered:Boolean(q.covered),
+    sourceFileId:q.sourceFileId || null,
+    chapterPath:normalizeChapterPath(q.chapterPath || ""),
+    chapterTitle:String(q.chapterTitle || "").trim()
+  };
+}
+function normalizeChapterPath(value){
+  return String(value||"").trim().replace(/[。．]/g,".").replace(/\s+/g,"");
+}
+function isValidChapterPath(value){
+  return /^\d+(?:\.\d+)*$/.test(normalizeChapterPath(value));
+}
+function refreshBankChapters(bank){
+  const map=new Map();
+  (bank.questions||[]).forEach(q=>{
+    q.chapterPath=normalizeChapterPath(q.chapterPath);
+    q.chapterTitle=String(q.chapterTitle||"").trim();
+    if(q.chapterPath){
+      const previous=map.get(q.chapterPath);
+      if(!previous || (!previous.title && q.chapterTitle)){
+        map.set(q.chapterPath,{path:q.chapterPath,title:q.chapterTitle||""});
+      }
+    }
+  });
+  bank.chapters=[...map.values()].sort((a,b)=>compareChapterPaths(a.path,b.path));
+  return bank.chapters;
+}
+function compareChapterPaths(a,b){
+  const aa=String(a).split(".").map(Number),bb=String(b).split(".").map(Number);
+  for(let i=0;i<Math.max(aa.length,bb.length);i++){
+    if((aa[i]??-1)!==(bb[i]??-1)) return (aa[i]??-1)-(bb[i]??-1);
+  }
+  return 0;
+}
+
+function switchTab(name){
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x.dataset.tab === name));
+  document.querySelectorAll(".view").forEach(x => x.classList.remove("active"));
+  document.getElementById("view-"+name).classList.add("active");
+  if(name==="study") renderStudy();
+  if(name==="editor") renderEditor();
+}
+function renderAll(){
+  renderBankList();
+  renderDraft();
+  renderStudy();
+  renderEditor();
+}
+function renderBankList(){
+  const el=document.getElementById("bankList");
+  if(!state.banks.length){el.innerHTML='<div class="empty" style="padding:24px 10px">还没有题库</div>';return;}
+  el.innerHTML=state.banks.map(b=>{
+    const covered=b.questions.filter(q=>q.covered).length;
+    const pct=b.questions.length?Math.round(covered/b.questions.length*100):0;
+    return `<div class="bank-item ${b.id===state.activeBankId?"active":""}">
+      <button onclick="selectBank('${b.id}')">
+        <div class="bank-name">${escapeHtml(b.name)}</div>
+        <div class="bank-meta"><span>${b.questions.length} 题</span><span>覆盖 ${pct}%</span></div>
+      </button>
+    </div>`;
+  }).join("");
+}
+function selectBank(id){
+  state.activeBankId=id;chapterFilterState={bankId:null,selected:new Set()};saveState();renderAll();switchTab("study");
+}
+
+function syncWrongRatio(value){
+  let v=Math.max(0,Math.min(100,Number(value)||0));
+  document.getElementById("wrongRatioRange").value=v;
+  document.getElementById("wrongRatioNumber").value=v;
+  document.getElementById("wrongRatioLabel").textContent=v+"%";
+}
+
+function getParseOptions(){
+  const checkedChars=[...document.querySelectorAll(".end-punctuation:checked")].map(x=>x.value);
+  const customChars=[...String(document.getElementById("customEndPunctuation")?.value||"")]
+    .filter(ch=>!/\s/.test(ch));
+  return {
+    useAnswerMarkers:Boolean(document.getElementById("modeAnswerMarker")?.checked),
+    useParagraph:Boolean(document.getElementById("modeParagraph")?.checked),
+    useSemanticLine:Boolean(document.getElementById("modeSemanticLine")?.checked),
+    usePunctuation:Boolean(document.getElementById("modePunctuation")?.checked),
+    useFirstLine:Boolean(document.getElementById("modeFirstLine")?.checked),
+    endChars:[...new Set([...checkedChars,...customChars])]
+  };
+}
+function validateParseOptions(options){
+  if(!options.useAnswerMarkers && !options.useParagraph && !options.useSemanticLine && !options.usePunctuation && !options.useFirstLine){
+    alert("请至少勾选一种识别模式。");
+    return false;
+  }
+  if(options.usePunctuation && !options.endChars.length){
+    alert("已开启题末标点截断，请至少勾选或输入一个结束标点。");
+    return false;
+  }
+  return true;
+}
+
+function parseNumberedQA(text, options){
+  text=String(text||"")
+    .replace(/\r\n?/g,"\n")
+    .replace(/\u00a0/g," ")
+    .replace(/\u200b/g,"");
+  const lines=text.split("\n");
+  const marker=/^\s*(?:第\s*)?(\d{1,4})\s*[\.．、\)）:：]\s*(.*)$/;
+  const blocks=[];let current=null;
+
+  for(const raw of lines){
+    const line=raw.replace(/[ \t]+$/,"");
+    const m=line.match(marker);
+    if(m){
+      if(current) blocks.push(current);
+      current={number:m[1],head:m[2]||"",lines:[]};
+    }else if(current){
+      current.lines.push(line);
+    }
+  }
+  if(current) blocks.push(current);
+  if(!blocks.length) return parseLooseQA(text);
+
+  const config=options||{useAnswerMarkers:true,useParagraph:true,useSemanticLine:true,usePunctuation:true,useFirstLine:true,endChars:["？","?",":","："]};
+  return blocks.map(block=>splitQuestionAndAnswer(block,config)).filter(x=>x.question);
+}
+
+function splitQuestionAndAnswer(block,options){
+  const rawLines=[block.head,...block.lines].map(s=>String(s||"").replace(/[ \t]+$/,""));
+  while(rawLines.length && !rawLines[0].trim()) rawLines.shift();
+  while(rawLines.length && !rawLines[rawLines.length-1].trim()) rawLines.pop();
+  if(!rawLines.length) return normalizeQuestion({});
+
+  const answerMarker=/^\s*(?:【?\s*)?(?:参考答案|标准答案|正确答案|答案|答|解析|解答|说明|提示)(?:\s*】)?\s*[：:、.]?\s*(.*)$/i;
+  const inlineAnswer=/(?:^|\s)(?:【?\s*)?(?:参考答案|标准答案|正确答案|答案|答|解析|解答)(?:\s*】)?\s*[：:]\s*/i;
+
+  // 1. 最可靠：明确的“答案/解析”标记。
+  if(options.useAnswerMarkers) for(let i=0;i<rawLines.length;i++){
+    const m=rawLines[i].match(answerMarker);
+    if(m && (i>0 || m[1])){
+      const question=joinQuestionLines(rawLines.slice(0,i));
+      const answer=[m[1]||"",...rawLines.slice(i+1)].join("\n").trim();
+      return normalizeQuestion({question,answer});
+    }
+  }
+  const joined=rawLines.join("\n").trim();
+  const inlineMatch=options.useAnswerMarkers?joined.match(inlineAnswer):null;
+  if(inlineMatch && inlineMatch.index>0){
+    const question=joined.slice(0,inlineMatch.index).trim();
+    const answer=joined.slice(inlineMatch.index+inlineMatch[0].length).trim();
+    return normalizeQuestion({question,answer});
+  }
+
+  // 2. 推荐逻辑：第一个完整段落是题目，其余段落是答案。
+  const paragraphs=joined
+    .split(/\n[ \t]*\n+/)
+    .map(s=>s.replace(/\n+/g," ").replace(/\s+/g," ").trim())
+    .filter(Boolean);
+  if(options.useParagraph && paragraphs.length>=2){
+    return normalizeQuestion({
+      question:cleanQuestionText(paragraphs[0]),
+      answer:paragraphs.slice(1).join("\n\n")
+    });
+  }
+
+  const nonempty=rawLines.map(s=>s.trim()).filter(Boolean);
+  // 3. PDF 没保留空行时：判断题目在第几行结束。
+  const boundary=options.useSemanticLine?findQuestionLineBoundary(nonempty,options.endChars): -1;
+  if(boundary>0 && boundary<nonempty.length){
+    return normalizeQuestion({
+      question:cleanQuestionText(joinQuestionLines(nonempty.slice(0,boundary))),
+      answer:nonempty.slice(boundary).join("\n").trim()
+    });
+  }
+
+  // 4. PDF 把题目与答案压成同一行时，只在明确题目终止符处保守截断。
+  const oneLine=nonempty.join(" ").replace(/\s+/g," ").trim();
+  const charBoundary=options.usePunctuation?findQuestionCharBoundary(oneLine,options.endChars): -1;
+  if(charBoundary>0 && charBoundary<oneLine.length){
+    return normalizeQuestion({
+      question:cleanQuestionText(oneLine.slice(0,charBoundary)),
+      answer:oneLine.slice(charBoundary).trim()
+    });
+  }
+
+  // 5. 无法可靠判断时，宁可只保留首行作为题目，剩余内容放入答案。
+  if(options.useFirstLine && nonempty.length>=2){
+    return normalizeQuestion({
+      question:cleanQuestionText(nonempty[0]),
+      answer:nonempty.slice(1).join("\n")
+    });
+  }
+  return normalizeQuestion({question:cleanQuestionText(oneLine),answer:""});
+}
+
+function joinQuestionLines(lines){
+  return lines.join(" ").replace(/\s+/g," ").trim();
+}
+
+function cleanQuestionText(text){
+  return String(text||"")
+    .replace(/^\s*(?:题目|问题)\s*[：:]\s*/i,"")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function findQuestionLineBoundary(lines,endChars){
+  if(lines.length<2) return -1;
+  const answerLike=/^(?:因为|由于|所以|因此|首先|其次|再次|最后|答|答案|解析|说明|理由|依据|例如|例如：|具体而言|其一|其二|一是|二是|三是|①|②|③|A[.、)]|B[.、)]|C[.、)]|D[.、)])/i;
+  const optionLike=/^[A-HＡ-Ｈa-h][\.．、\)）]\s*/;
+  for(let i=1;i<lines.length;i++){
+    const prev=lines.slice(0,i).join(" ");
+    const cur=lines[i];
+    if(answerLike.test(cur)) return i;
+    if(endsWithConfiguredPunctuation(prev,endChars)) return i;
+    if(/[。！!]\s*$/.test(prev) && answerLike.test(cur)) return i;
+    if(/[：:]\s*$/.test(prev) && !optionLike.test(cur)) return i;
+  }
+  return -1;
+}
+function endsWithConfiguredPunctuation(text,endChars){
+  const trimmed=String(text||"").trim();
+  return (endChars||[]).some(ch=>ch && trimmed.endsWith(ch));
+}
+function findQuestionCharBoundary(text,endChars){
+  if(!text || !(endChars||[]).length) return -1;
+  let best=-1;
+  for(const ch of endChars){
+    if(!ch) continue;
+    const index=text.indexOf(ch);
+    if(index>=0 && (best<0 || index<best)) best=index;
+  }
+  return best<0?-1:best+1;
+}
+function parseLooseQA(text){
+  const normalized=String(text||"").replace(/\r\n?/g,"\n").trim();
+  if(!normalized) return [];
+  const chunks=normalized.split(/\n\s*\n+/).map(x=>x.trim()).filter(Boolean);
+  const result=[];
+  for(const chunk of chunks){
+    const m=chunk.match(/^(?:题目|问题|Q)\s*[：:]\s*([\s\S]*?)(?:\n|\s)+(?:参考)?(?:答案|A)\s*[：:]\s*([\s\S]*)$/i);
+    if(m){result.push(normalizeQuestion({question:m[1],answer:m[2]}));continue;}
+    const lines=chunk.split("\n").map(x=>x.trim()).filter(Boolean);
+    if(lines.length===1){
+      result.push(normalizeQuestion({question:lines[0],answer:""}));
+    }else{
+      result.push(normalizeQuestion({question:lines[0],answer:lines.slice(1).join("\n")}));
+    }
+  }
+  return result;
+}
+
+async function parseSelectedFiles(){
+  const input=document.getElementById("fileInput");
+  const files=[...input.files];
+  if(!files.length){alert("请先选择文件。");return;}
+  const options=getParseOptions();
+  if(!validateParseOptions(options))return;
+  let added=0;
+  for(const file of files){
+    try{
+      const sourceId=uid("file");
+      let text="";
+      const lower=file.name.toLowerCase();
+      if(lower.endsWith(".pdf")) text=await extractPdfText(file);
+      else if(lower.endsWith(".docx")) text=await extractDocxText(file);
+      else text=await file.text();
+
+      const record={id:sourceId,name:file.name,type:file.type||guessMime(lower),size:file.size,text,blob:file,createdAt:new Date().toISOString()};
+      await idbPut(record);
+      pendingSourceFiles.set(sourceId,{id:sourceId,name:file.name,type:record.type,size:file.size});
+      const parsed=parseNumberedQA(text,options).map(q=>({...q,sourceFileId:sourceId}));
+      draftItems.push(...parsed);
+      added+=parsed.length;
+    }catch(err){
+      console.error(err);
+      alert(`文件“${file.name}”识别失败：${err.message||err}`);
+    }
+  }
+  input.value="";
+  renderDraft();
+  alert(`已加入 ${added} 道题。请在暂存区检查题目与答案后再保存。`);
+}
+async function extractDocxText(file){
+  if(!window.mammoth) throw new Error("DOCX 解析组件未加载，请检查网络。");
+  const arrayBuffer=await file.arrayBuffer();
+  const result=await mammoth.extractRawText({arrayBuffer});
+  return result.value||"";
+}
+async function extractPdfText(file){
+  if(!window.pdfjsLib) throw new Error("PDF 解析组件未加载，请检查网络。");
+  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+  const pages=[];
+
+  for(let p=1;p<=pdf.numPages;p++){
+    const page=await pdf.getPage(p);
+    const content=await page.getTextContent();
+    const items=content.items.filter(i=>String(i.str||"").trim());
+    const lines=[];
+
+    for(const item of items){
+      const y=Math.round(item.transform[5]*2)/2;
+      const x=Number(item.transform[4]||0);
+      const h=Math.max(8,Math.abs(Number(item.height||item.transform[3]||12)));
+      let line=lines.find(l=>Math.abs(l.y-y)<=Math.max(2.5,h*.22));
+      if(!line){line={y,parts:[],height:h};lines.push(line);}
+      line.parts.push({x,text:String(item.str||""),width:Number(item.width||0)});
+      line.height=Math.max(line.height,h);
+    }
+
+    lines.sort((a,b)=>b.y-a.y);
+    lines.forEach(line=>{
+      line.parts.sort((a,b)=>a.x-b.x);
+      line.xMin=line.parts.length?line.parts[0].x:0;
+      line.text=line.parts.map(x=>x.text).join(" ").replace(/\s+/g," ").trim();
+    });
+
+    const gaps=[];
+    for(let i=1;i<lines.length;i++){
+      const g=lines[i-1].y-lines[i].y;
+      if(g>2)gaps.push(g);
+    }
+    gaps.sort((a,b)=>a-b);
+    const medianGap=gaps.length?gaps[Math.floor(gaps.length/2)]:14;
+
+    const lefts=lines.map(l=>l.xMin).sort((a,b)=>a-b);
+    const baseLeft=lefts.length?lefts[Math.floor(lefts.length*.25)]:0;
+    const out=[];
+
+    for(let i=0;i<lines.length;i++){
+      const line=lines[i];
+      out.push(line.text);
+      if(i===lines.length-1) continue;
+
+      const next=lines[i+1];
+      const gap=line.y-next.y;
+      const nextIndented=next.xMin>baseLeft+Math.max(12,next.height*.9);
+      const currentEnds=/[。！？?!：:；;]\s*$/.test(line.text);
+      const nextLooksAnswer=/^(?:参考答案|标准答案|正确答案|答案|答|解析|解答|说明|因为|由于|所以|因此|首先|其次|一是|二是|三是|①|②|③)/.test(next.text);
+
+      // 同时使用行距、首行缩进和答案标志恢复 PDF 中丢失的段落空行。
+      if(gap>medianGap*1.32 || nextLooksAnswer || (nextIndented && currentEnds)){
+        out.push("");
+      }
+    }
+    pages.push(out.join("\n"));
+  }
+  return pages.join("\n\n");
+}
+function guessMime(name){
+  if(name.endsWith(".pdf"))return"application/pdf";
+  if(name.endsWith(".docx"))return"application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  return"text/plain";
+}
+
+function parseManualText(){
+  const el=document.getElementById("manualText");
+  const options=getParseOptions();if(!validateParseOptions(options))return;
+  const items=parseNumberedQA(el.value,options);
+  if(!items.length){alert("没有识别到可加入的题目。");return;}
+  draftItems.push(...items);el.value="";renderDraft();
+}
+function addBlankDraft(){draftItems.push(normalizeQuestion({}));renderDraft();}
+function clearDraft(){
+  if(draftItems.length&&!confirm("确定清空全部暂存题目吗？"))return;
+  draftItems=[];draftSelection.clear();pendingSourceFiles.clear();renderDraft();
+}
+function updateDraft(id,field,value){
+  const item=draftItems.find(x=>x.id===id);if(item)item[field]=value;
+}
+function deleteDraft(id){
+  draftItems=draftItems.filter(x=>x.id!==id);draftSelection.delete(id);renderDraft();
+}
+function toggleDraftSelection(id,checked){
+  if(checked)draftSelection.add(id);else draftSelection.delete(id);
+}
+function selectAllDraftQuestions(checked){
+  draftSelection=checked?new Set(draftItems.map(q=>q.id)):new Set();
+  renderDraft();
+}
+function applyChapterToSelectedDrafts(){
+  if(!draftSelection.size){alert("请先勾选要归入章节的题目。");return;}
+  const path=normalizeChapterPath(document.getElementById("batchChapterPath").value);
+  const title=document.getElementById("batchChapterTitle").value.trim();
+  if(!isValidChapterPath(path)){alert("章节编号格式不正确，请使用 1、1.1、1.1.1 等数字层级格式。");return;}
+  draftItems.forEach(q=>{
+    if(draftSelection.has(q.id)){q.chapterPath=path;q.chapterTitle=title;}
+  });
+  renderDraft();
+}
+function clearChapterFromSelectedDrafts(){
+  if(!draftSelection.size){alert("请先勾选题目。");return;}
+  draftItems.forEach(q=>{
+    if(draftSelection.has(q.id)){q.chapterPath="";q.chapterTitle="";}
+  });
+  renderDraft();
+}
+function renderDraft(){
+  const el=document.getElementById("draftList");
+  draftSelection=new Set([...draftSelection].filter(id=>draftItems.some(q=>q.id===id)));
+  document.getElementById("draftCount").textContent=`暂存 ${draftItems.length} 题 · 已勾选 ${draftSelection.size} 题`;
+  if(!draftItems.length){el.innerHTML='<div class="empty">识别或手动添加的题目会完整显示在这里。</div>';return;}
+  el.innerHTML=draftItems.map((q,i)=>`<div class="qcard">
+    <div class="qtop">
+      <label class="qindex" style="display:flex;align-items:center;gap:8px"><input type="checkbox" ${draftSelection.has(q.id)?"checked":""} onchange="toggleDraftSelection('${q.id}',this.checked)">第 ${i+1} 题</label>
+      <div class="actions">
+        ${q.chapterPath?`<span class="chapter-badge">${escapeHtml(q.chapterPath)}${q.chapterTitle?` · ${escapeHtml(q.chapterTitle)}`:""}</span>`:""}
+        <button class="btn small danger" onclick="deleteDraft('${q.id}')">删除</button>
+      </div>
+    </div>
+    <div class="qgrid">
+      <div class="field"><label>题目</label><textarea class="textarea" oninput="updateDraft('${q.id}','question',this.value)">${escapeHtml(q.question)}</textarea></div>
+      <div class="field"><label>预存答案（可留空）</label><textarea class="textarea" oninput="updateDraft('${q.id}','answer',this.value)">${escapeHtml(q.answer)}</textarea></div>
+    </div>
+    <div class="space"></div>
+    <div class="grid-2">
+      <div class="field"><label>章节编号</label><input class="input" value="${escapeHtml(q.chapterPath||"")}" placeholder="例如 1.1" oninput="updateDraft('${q.id}','chapterPath',normalizeChapterPath(this.value))"></div>
+      <div class="field"><label>章节名称</label><input class="input" value="${escapeHtml(q.chapterTitle||"")}" placeholder="例如 第一章·核心概念" oninput="updateDraft('${q.id}','chapterTitle',this.value)"></div>
+    </div>
+  </div>`).join("");
+}
+function collectDraft(){
+  return draftItems.map(normalizeQuestion).filter(q=>q.question);
+}
+function validateQuestionChapters(questions){
+  const invalid=questions.find(q=>q.chapterPath && !isValidChapterPath(q.chapterPath));
+  if(invalid){
+    alert("存在格式不正确的章节编号，请使用 1、1.1、1.1.1 等数字层级格式。");
+    return false;
+  }
+  return true;
+}
+function sourceMetasForQuestions(questions){
+  const ids=[...new Set(questions.map(q=>q.sourceFileId).filter(Boolean))];
+  return ids.map(id=>pendingSourceFiles.get(id)).filter(Boolean);
+}
+function saveDraftAsNewBank(){
+  const questions=collectDraft();
+  if(!questions.length){alert("暂存区没有有效题目。");return;}
+  if(!validateQuestionChapters(questions))return;
+  const name=document.getElementById("newBankName").value.trim()||`未命名题库 ${state.banks.length+1}`;
+  const now=new Date().toISOString();
+  const bank={id:uid("bank"),name,questions,chapters:[],sourceFiles:sourceMetasForQuestions(questions),createdAt:now,updatedAt:now};refreshBankChapters(bank);
+  state.banks.unshift(bank);state.activeBankId=bank.id;saveState();
+  draftItems=[];draftSelection.clear();pendingSourceFiles.clear();document.getElementById("newBankName").value="";
+  renderAll();switchTab("study");
+}
+function mergeDraftIntoActive(){
+  const bank=getActiveBank();if(!bank){alert("请先选择一个题库，或保存为新题库。");return;}
+  const questions=collectDraft();if(!questions.length){alert("暂存区没有有效题目。");return;}
+  if(!validateQuestionChapters(questions))return;
+  bank.questions.push(...questions);
+  const metas=sourceMetasForQuestions(questions);
+  const existing=new Set((bank.sourceFiles||[]).map(f=>f.id));
+  bank.sourceFiles=[...(bank.sourceFiles||[]),...metas.filter(f=>!existing.has(f.id))];
+  refreshBankChapters(bank);bank.updatedAt=new Date().toISOString();saveState();
+  draftItems=[];draftSelection.clear();pendingSourceFiles.clear();renderAll();switchTab("editor");
+}
+
+function renderStudy(){
+  const bank=getActiveBank();
+  document.getElementById("studyEmpty").style.display=bank?"none":"block";
+  document.getElementById("studyContent").style.display=bank?"block":"none";
+  if(!bank)return;
+  document.getElementById("studyBankName").textContent=bank.name;
+  renderStats();
+  renderChapterFilters(bank);
+  renderSources(bank);
+}
+function getChapterNodes(bank){
+  const map=new Map();
+  let hasUnassigned=false;
+  (bank.questions||[]).forEach(q=>{
+    const path=normalizeChapterPath(q.chapterPath);
+    if(!path){hasUnassigned=true;return;}
+    const parts=path.split(".");
+    for(let i=1;i<=parts.length;i++){
+      const prefix=parts.slice(0,i).join(".");
+      if(!map.has(prefix))map.set(prefix,{key:prefix,path:prefix,title:"",depth:i,count:0});
+      const node=map.get(prefix);
+      node.count++;
+      if(prefix===path && q.chapterTitle && !node.title)node.title=q.chapterTitle;
+    }
+  });
+  const nodes=[...map.values()].sort((a,b)=>compareChapterPaths(a.path,b.path));
+  if(hasUnassigned)nodes.push({key:"__unassigned__",path:"",title:"未分组题目",depth:1,count:bank.questions.filter(q=>!normalizeChapterPath(q.chapterPath)).length});
+  return nodes;
+}
+function chapterNodeLabel(node){
+  if(node.key==="__unassigned__")return "未分组题目";
+  return `${node.path}${node.title?` · ${node.title}`:""}`;
+}
+function renderChapterFilters(bank){
+  const el=document.getElementById("chapterFilters");
+  const nodes=getChapterNodes(bank);
+  const keys=nodes.map(n=>n.key);
+  if(chapterFilterState.bankId!==bank.id){
+    chapterFilterState={bankId:bank.id,selected:new Set(keys)};
+  }else{
+    chapterFilterState.selected=new Set([...chapterFilterState.selected].filter(k=>keys.includes(k)));
+  }
+  if(!nodes.length){
+    el.innerHTML='<div class="muted">当前题库没有可抽取的题目。</div>';
+    updateChapterPoolInfo();
+    return;
+  }
+  el.innerHTML=nodes.map(node=>`<label class="chapter-filter-row" style="padding-left:${9+(node.depth-1)*18}px">
+    <input type="checkbox" ${chapterFilterState.selected.has(node.key)?"checked":""} onchange="toggleChapterFilter('${node.key}',this.checked)">
+    <span class="chapter-label">${escapeHtml(chapterNodeLabel(node))}</span>
+    <span class="count">${node.count} 题</span>
+  </label>`).join("");
+  updateChapterPoolInfo();
+}
+function toggleChapterFilter(key,checked){
+  if(checked)chapterFilterState.selected.add(key);else chapterFilterState.selected.delete(key);
+  updateChapterPoolInfo();
+}
+function setAllChapterFilters(checked){
+  const bank=getActiveBank();if(!bank)return;
+  const keys=getChapterNodes(bank).map(n=>n.key);
+  chapterFilterState={bankId:bank.id,selected:checked?new Set(keys):new Set()};
+  renderChapterFilters(bank);
+}
+function questionMatchesSelectedChapters(q){
+  const path=normalizeChapterPath(q.chapterPath);
+  if(!path)return chapterFilterState.selected.has("__unassigned__");
+  for(const selected of chapterFilterState.selected){
+    if(selected!=="__unassigned__" && (path===selected || path.startsWith(selected+".")))return true;
+  }
+  return false;
+}
+function getSelectedQuestionPool(bank){
+  return (bank.questions||[]).filter(questionMatchesSelectedChapters);
+}
+function updateChapterPoolInfo(){
+  const bank=getActiveBank();
+  const el=document.getElementById("chapterPoolInfo");
+  if(!bank||!el)return;
+  const pool=getSelectedQuestionPool(bank);
+  el.textContent=`当前专项范围共 ${pool.length} 题；选择父章节会自动包含其全部下级小节。`;
+}
+function renderStats(){
+  const bank=getActiveBank();if(!bank)return;
+  const total=bank.questions.length;
+  const covered=bank.questions.filter(q=>q.covered).length;
+  const wrong=bank.questions.reduce((s,q)=>s+Number(q.wrongCount||0),0);
+  const pct=total?Math.round(covered/total*100):0;
+  document.getElementById("statTotal").textContent=total;
+  document.getElementById("statCoverage").textContent=pct+"%";
+  document.getElementById("statRemaining").textContent=total-covered;
+  document.getElementById("statWrong").textContent=wrong;
+  document.getElementById("coverageBar").style.width=pct+"%";
+}
+function renderSources(bank){
+  const el=document.getElementById("sourceFiles");
+  const files=bank.sourceFiles||[];
+  if(!files.length){el.innerHTML='<span class="muted">该题库没有关联上传文件。</span>';return;}
+  el.innerHTML=files.map(f=>`<div class="source-pill">
+    <span title="${escapeHtml(f.name)}">${escapeHtml(f.name.length>24?f.name.slice(0,22)+"…":f.name)}</span>
+    <button class="btn small" onclick="openOriginalFile('${f.id}')">原文件</button>
+    <button class="btn small ghost" onclick="viewSourceText('${f.id}')">原文</button>
+  </div>`).join("");
+}
+function resetCoverage(){
+  const bank=getActiveBank();if(!bank)return;
+  if(!confirm("确定重置当前题库的覆盖率吗？错误次数不会被清零。"))return;
+  bank.questions.forEach(q=>q.covered=false);saveState();renderAll();
+}
+function randomSample(arr,k){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a.slice(0,k);
+}
+function weightedSample(arr,k){
+  const pool=[...arr],out=[];
+  while(pool.length&&out.length<k){
+    const total=pool.reduce((s,q)=>s+Math.max(1,Number(q.wrongCount||0)),0);
+    let r=Math.random()*total,index=0;
+    for(let i=0;i<pool.length;i++){
+      r-=Math.max(1,Number(pool[i].wrongCount||0));
+      if(r<=0){index=i;break;}
+    }
+    out.push(pool.splice(index,1)[0]);
+  }
+  return out;
+}
+function drawQuiz(){
+  const bank=getActiveBank();if(!bank||!bank.questions.length){alert("当前题库没有题目。");return;}
+  const questionPool=getSelectedQuestionPool(bank);
+  if(!questionPool.length){alert("请至少选择一个包含题目的章节、小节或未分组范围。");return;}
+  const popup=window.open("","_blank");
+  if(!popup){alert("浏览器阻止了新窗口，请允许此网页弹出窗口后重试。");return;}
+  let count=Math.max(1,Math.min(questionPool.length,Number(document.getElementById("drawCount").value)||1));
+  const ratio=Math.max(0,Math.min(100,Number(document.getElementById("wrongRatioNumber").value)||0));
+  const wrongCandidates=questionPool.filter(q=>Number(q.wrongCount||0)>0);
+  const wrongSlots=Math.min(Math.round(count*ratio/100),wrongCandidates.length);
+  let selected=weightedSample(wrongCandidates,wrongSlots);
+  const selectedIds=new Set(selected.map(q=>q.id));
+  let remainingPool=questionPool.filter(q=>!selectedIds.has(q.id));
+  const need=count-selected.length;
+  if(document.getElementById("preferUnseen").value==="yes"){
+    const unseen=remainingPool.filter(q=>!q.covered);
+    const first=randomSample(unseen,Math.min(need,unseen.length));
+    selected.push(...first);first.forEach(q=>selectedIds.add(q.id));
+    remainingPool=questionPool.filter(q=>!selectedIds.has(q.id));
+    if(selected.length<count)selected.push(...randomSample(remainingPool,count-selected.length));
+  }else{
+    selected.push(...randomSample(remainingPool,need));
+  }
+  selected=randomSample(selected,count);
+  selected.forEach(q=>q.covered=true);
+  bank.updatedAt=new Date().toISOString();saveState();renderAll();
+  popup.document.open();
+  popup.document.write(buildQuizPage(bank,selected));
+  popup.document.close();
+}
+function buildQuizPage(bank,questions){
+  const safeData=JSON.stringify(questions.map(q=>({id:q.id,question:q.question,answer:q.answer,chapterPath:q.chapterPath||"",chapterTitle:q.chapterTitle||""}))).replace(/</g,"\\u003c");
+  const safeBankId=JSON.stringify(bank.id);
+  const safeName=escapeHtml(bank.name);
+  return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${safeName}｜自测</title>
+  <style>
+  *{box-sizing:border-box}body{margin:0;background:#f4f5f7;color:#1d2433;font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+  main{max-width:900px;margin:auto;padding:28px 18px 80px}.head{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;margin-bottom:20px}
+  h1{font-size:22px;margin:0}.sub{color:#687183;font-size:13px}.card{background:white;border:1px solid #e4e7ec;border-radius:14px;padding:20px;margin:12px 0;box-shadow:0 5px 18px rgba(25,35,55,.05)}
+  .num{font-size:12px;color:#7b8495;margin-bottom:10px}.q{font-size:18px;line-height:1.75;font-weight:650;white-space:pre-wrap}
+  textarea{width:100%;min-height:110px;margin-top:16px;border:1px solid #d8dde6;border-radius:10px;padding:12px;resize:vertical;font:inherit;line-height:1.6}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:1px solid #d6dbe4;background:#fff;border-radius:9px;padding:8px 12px;cursor:pointer}
+  button:hover{background:#f5f7fa}.wrong{color:#b4233f;border-color:#f1c3cc}.answer{display:none;margin-top:12px;padding:14px;background:#f7f8fa;border-radius:10px;line-height:1.75;white-space:pre-wrap}
+  .answer.show{display:block}.done{color:#19764b;font-size:12px;margin-left:auto;align-self:center}
+  </style></head><body><main>
+  <div class="head"><div><h1>${safeName}</h1><div class="sub">本次共 ${questions.length} 题 · 网页作者：109期10班 YYM</div></div><div class="sub">答案默认隐藏</div></div>
+  <div id="list"></div>
+  </main><script>
+  const DATA=${safeData}; const BANK_ID=${safeBankId};
+  const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\\"":"&quot;","'":"&#039;"}[c]));
+  document.getElementById("list").innerHTML=DATA.map((x,i)=>\`<section class="card">
+    <div class="num">第 \${i+1} 题\${x.chapterPath?" · "+esc(x.chapterPath)+(x.chapterTitle?" · "+esc(x.chapterTitle):""):""}</div><div class="q">\${esc(x.question)}</div>
+    <textarea placeholder="在这里默写或作答（内容只停留在当前页面）"></textarea>
+    <div class="actions">
+      <button onclick="toggleAnswer(this)">显示答案</button>
+      <button class="wrong" onclick="markWrong('\${x.id}',this)">标记答错 +1</button>
+      <span class="done"></span>
+    </div>
+    <div class="answer">\${x.answer?esc(x.answer):"该题未预存答案。"}</div>
+  </section>\`).join("");
+  function toggleAnswer(btn){const a=btn.closest(".card").querySelector(".answer");a.classList.toggle("show");btn.textContent=a.classList.contains("show")?"隐藏答案":"显示答案";}
+  function markWrong(id,btn){if(window.opener)window.opener.postMessage({type:"memoryforge-wrong",bankId:BANK_ID,questionId:id,delta:1},"*");btn.closest(".actions").querySelector(".done").textContent="已记录";}
+  <\/script></body></html>`;
+}
+
+window.addEventListener("message",e=>{
+  const d=e.data;
+  if(!d||d.type!=="memoryforge-wrong")return;
+  const bank=state.banks.find(b=>b.id===d.bankId);if(!bank)return;
+  const q=bank.questions.find(x=>x.id===d.questionId);if(!q)return;
+  q.wrongCount=Math.max(0,Number(q.wrongCount||0)+Number(d.delta||0));saveState();renderStats();
+  const input=document.querySelector(`[data-wrong-id="${q.id}"]`);if(input)input.value=q.wrongCount;
+});
+
+function renderEditor(){
+  const bank=getActiveBank();
+  document.getElementById("editorEmpty").style.display=bank?"none":"block";
+  document.getElementById("editorContent").style.display=bank?"block":"none";
+  if(!bank)return;
+  document.getElementById("editorBankName").textContent=bank.name;
+  const el=document.getElementById("questionList");
+  if(!bank.questions.length){el.innerHTML='<div class="empty">该题库暂无题目。</div>';return;}
+  el.innerHTML=bank.questions.map((q,i)=>`<div class="qcard" data-qid="${q.id}">
+    <div class="qtop"><span class="qindex">第 ${i+1} 题</span><button class="btn small danger" onclick="deleteQuestionFromActive('${q.id}')">删除</button></div>
+    <div class="qgrid">
+      <div class="field"><label>题目</label><textarea class="textarea" data-field="question">${escapeHtml(q.question)}</textarea></div>
+      <div class="field"><label>预存答案</label><textarea class="textarea" data-field="answer">${escapeHtml(q.answer)}</textarea></div>
+    </div>
+    <div class="space"></div>
+    <div class="grid-2">
+      <div class="field"><label>章节编号</label><input class="input" data-field="chapterPath" value="${escapeHtml(q.chapterPath||"")}" placeholder="例如 1.1.1"></div>
+      <div class="field"><label>章节名称</label><input class="input" data-field="chapterTitle" value="${escapeHtml(q.chapterTitle||"")}" placeholder="例如 第一章·基础概念"></div>
+    </div>
+    <div class="space"></div>
+    <div class="grid-3">
+      <div class="field"><label>错误次数</label><input class="input" data-field="wrongCount" data-wrong-id="${q.id}" type="number" min="0" value="${Number(q.wrongCount||0)}"></div>
+      <div class="field"><label>覆盖状态</label><select class="select" data-field="covered"><option value="false" ${q.covered?"":"selected"}>未覆盖</option><option value="true" ${q.covered?"selected":""}>已覆盖</option></select></div>
+      <div class="field"><label>来源</label><div class="input" style="min-height:44px">${sourceNameForQuestion(bank,q)||"手动输入"}</div></div>
+    </div>
+  </div>`).join("");
+}
+function sourceNameForQuestion(bank,q){
+  const f=(bank.sourceFiles||[]).find(x=>x.id===q.sourceFileId);
+  return f?escapeHtml(f.name):"";
+}
+function saveEditorChanges(){
+  const bank=getActiveBank();if(!bank)return;
+  document.querySelectorAll("#questionList .qcard").forEach(card=>{
+    const q=bank.questions.find(x=>x.id===card.dataset.qid);if(!q)return;
+    q.question=card.querySelector('[data-field="question"]').value.trim();
+    q.answer=card.querySelector('[data-field="answer"]').value.trim();
+    q.chapterPath=normalizeChapterPath(card.querySelector('[data-field="chapterPath"]').value);
+    q.chapterTitle=card.querySelector('[data-field="chapterTitle"]').value.trim();
+    q.wrongCount=Math.max(0,Number(card.querySelector('[data-field="wrongCount"]').value)||0);
+    q.covered=card.querySelector('[data-field="covered"]').value==="true";
+  });
+  const invalid=bank.questions.find(q=>q.chapterPath && !isValidChapterPath(q.chapterPath));
+  if(invalid){alert("存在格式不正确的章节编号，请使用 1、1.1、1.1.1 等数字层级格式。");renderEditor();return;}
+  bank.questions=bank.questions.filter(q=>q.question);
+  refreshBankChapters(bank);bank.updatedAt=new Date().toISOString();saveState();renderAll();alert("题库修改已保存。");
+}
+function addQuestionToActive(){
+  const bank=getActiveBank();if(!bank)return;
+  bank.questions.push(normalizeQuestion({}));saveState();renderEditor();
+  const list=document.getElementById("questionList");list.scrollTop=list.scrollHeight;
+}
+function deleteQuestionFromActive(id){
+  const bank=getActiveBank();if(!bank||!confirm("确定删除这道题吗？"))return;
+  bank.questions=bank.questions.filter(q=>q.id!==id);saveState();renderAll();
+}
+function deleteActiveBank(){
+  const bank=getActiveBank();if(!bank||!confirm(`确定删除题库“${bank.name}”吗？`))return;
+  state.banks=state.banks.filter(b=>b.id!==bank.id);
+  state.activeBankId=state.banks[0]?.id||null;saveState();renderAll();
+}
+function exportActiveBank(){
+  const bank=getActiveBank();if(!bank)return;
+  const payload={format:"MemoryForgeBank",version:5.2,exportedAt:new Date().toISOString(),bank:{...bank,sourceFiles:[]}};
+  downloadText(`${safeFilename(bank.name)}.mfbank.json`,JSON.stringify(payload,null,2),"application/json");
+}
+function safeFilename(name){return String(name||"题库").replace(/[\\/:*?"<>|]/g,"_").slice(0,80);}
+function downloadText(filename,text,type){
+  const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement("a");
+  a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function importBankJson(event){
+  const file=event.target.files[0];event.target.value="";if(!file)return;
+  try{
+    const data=JSON.parse(await file.text());
+    const raw=data.bank||data;
+    if(!raw||!Array.isArray(raw.questions))throw new Error("文件中没有有效题库数据");
+    const now=new Date().toISOString();
+    const bank={id:uid("bank"),name:(raw.name||file.name.replace(/\.[^.]+$/,""))+"（导入）",questions:raw.questions.map(normalizeQuestion),chapters:[],sourceFiles:[],createdAt:now,updatedAt:now};refreshBankChapters(bank);
+    state.banks.unshift(bank);state.activeBankId=bank.id;saveState();renderAll();switchTab("study");
+  }catch(err){alert("导入失败："+(err.message||err));}
+}
+async function clearAllData(){
+  if(!confirm("这会清空当前浏览器中的全部题库、学习记录和原文件，且无法恢复。确定继续吗？"))return;
+  localStorage.removeItem(STORAGE_KEY);state={version:5.2,banks:[],activeBankId:null};draftItems=[];draftSelection.clear();chapterFilterState={bankId:null,selected:new Set()};pendingSourceFiles.clear();
+  try{await idbClear();}catch(e){}
+  renderAll();switchTab("import");
+}
+
+function openDb(){
+  if(dbPromise)return dbPromise;
+  dbPromise=new Promise((resolve,reject)=>{
+    if(!window.indexedDB){reject(new Error("当前浏览器不支持 IndexedDB"));return;}
+    const req=indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(DB_STORE))db.createObjectStore(DB_STORE,{keyPath:"id"});};
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+  });
+  return dbPromise;
+}
+async function idbPut(record){
+  const db=await openDb();
+  return new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,"readwrite");tx.objectStore(DB_STORE).put(record);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});
+}
+async function idbGet(id){
+  const db=await openDb();
+  return new Promise((resolve,reject)=>{const req=db.transaction(DB_STORE,"readonly").objectStore(DB_STORE).get(id);req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});
+}
+async function idbClear(){
+  const db=await openDb();
+  return new Promise((resolve,reject)=>{const tx=db.transaction(DB_STORE,"readwrite");tx.objectStore(DB_STORE).clear();tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});
+}
+async function openOriginalFile(id){
+  try{
+    const rec=await idbGet(id);if(!rec||!rec.blob){alert("原文件未找到，可能已被浏览器清理或来自 JSON 导入。");return;}
+    const url=URL.createObjectURL(rec.blob);
+    const win=window.open(url,"_blank");
+    if(!win){
+      const a=document.createElement("a");a.href=url;a.download=rec.name||"原文件";a.click();
+    }
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(err){alert("打开原文件失败："+(err.message||err));}
+}
+async function viewSourceText(id){
+  try{
+    const rec=await idbGet(id);if(!rec){alert("原文数据未找到。");return;}
+    document.getElementById("modalTitle").textContent=rec.name+" · 解析文本";
+    document.getElementById("modalText").textContent=rec.text||"没有可显示的文本。";
+    document.getElementById("textModal").classList.add("show");
+  }catch(err){alert("读取原文失败："+(err.message||err));}
+}
+function closeTextModal(){document.getElementById("textModal").classList.remove("show");}
+function closeModalOnBackdrop(e){if(e.target.id==="textModal")closeTextModal();}
+
+async function loadAnnouncements(manual=false){
+  const status=document.getElementById("announceStatus");
+  const target=document.getElementById("announcementContent");
+  status.textContent=manual?"正在刷新…":"正在读取公告…";
+  try{
+    const base=APP_CONFIG.announcementUrl;
+    if(!base)throw new Error("未配置公告地址");
+    const joiner=base.includes("?")?"&":"?";
+    const res=await fetch(base+joiner+"_="+Date.now(),{cache:"no-store"});
+    if(!res.ok)throw new Error("HTTP "+res.status);
+    const data=await res.json();
+    renderAnnouncementData(data);
+    status.textContent=`更新于 ${formatDate(data.updatedAt)||"刚刚"}`;
+  }catch(err){
+    renderAnnouncementData(FALLBACK_ANNOUNCEMENT);
+    status.textContent=location.protocol==="file:"?"离线默认公告":"公告读取失败，已显示默认内容";
+    console.warn("Announcement load failed:",err);
+  }
+}
+function renderAnnouncementData(data){
+  const items=(Array.isArray(data.items)?data.items:[]).filter(x=>x&&x.enabled!==false);
+  const target=document.getElementById("announcementContent");
+  if(!items.length){target.innerHTML='<span class="muted">暂无公告</span>';return;}
+  target.innerHTML=`<div class="announce-items">${items.slice(0,5).map(x=>`<article class="announce-item">
+    <h3>${escapeHtml(x.title||"公告")}</h3>
+    <p>${escapeHtml(x.content||"")}</p>
+    ${x.link?`<div style="margin-top:8px"><a href="${escapeHtml(x.link)}" target="_blank" rel="noopener" style="color:#a9bcff">${escapeHtml(x.linkText||"查看详情")}</a></div>`:""}
+  </article>`).join("")}</div>`;
+}
+function formatDate(v){
+  if(!v)return"";const d=new Date(v);return isNaN(d)?String(v):d.toLocaleString("zh-CN",{hour12:false});
+}
+
+renderAll();
+loadAnnouncements();
+setInterval(()=>loadAnnouncements(false),APP_CONFIG.announcementPollMs);
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"45c2bf8136a245cd97f1c2e9a96c0730","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

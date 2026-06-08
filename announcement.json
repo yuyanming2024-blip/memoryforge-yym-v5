@@ -10,27 +10,31 @@
       "announcements": [
         {
           "id": "int-10-001",
-          "title": "简答题资料",
-          "content": "暂无",
+          "title": "简答题：COPD 诊断标准",
+          "content": "吸入支气管舒张剂后，FEV1/FVC < 70% 即可确定存在持续气流受限。注意十版教材对 GOLD 分级的调整。",
           "publishedAt": "2026-06-08",
           "pinned": true,
           "tags": [
             "呼吸系统",
-            "重点考点"
+            "考点"
           ],
-          "enabled": true
+          "enabled": true,
+          "link": "",
+          "linkText": "查看详情"
         },
         {
           "id": "int-10-002",
-          "title": "论述题资料",
-          "content": "暂无",
+          "title": "论述题：心力衰竭的药物治疗",
+          "content": "重点论述“新四联”方案：ARNI/ACEI/ARB、β受体阻滞剂、MRA 及 SGLT2i 的作用机制及联用原则。",
           "publishedAt": "2026-06-07",
           "pinned": false,
           "tags": [
             "心血管",
-            "指南更新"
+            "重点"
           ],
-          "enabled": true
+          "enabled": true,
+          "link": "",
+          "linkText": "查看详情"
         }
       ]
     },
@@ -42,27 +46,31 @@
       "announcements": [
         {
           "id": "sur-10-001",
-          "title": "简答题资料",
-          "content": "暂无",
+          "title": "简答题：低钾血症的临床表现",
+          "content": "最早出现肌无力（先四肢后躯干），并可有心电图改变（U波出现、T波平坦）。补钾需遵循“见尿补钾”原则。",
           "publishedAt": "2026-06-08",
           "pinned": true,
           "tags": [
             "外总",
             "必背"
           ],
-          "enabled": true
+          "enabled": true,
+          "link": "",
+          "linkText": "查看详情"
         },
         {
           "id": "sur-10-002",
-          "title": "论述题资料",
-          "content": "暂无",
+          "title": "论述题：腹股沟斜疝与直疝的鉴别",
+          "content": "从发病年龄、突出途径、与腹壁下动脉关系、压迫深环后的表现以及疝块形状五个维度进行对比。",
           "publishedAt": "2026-06-05",
           "pinned": false,
           "tags": [
             "普外",
-            "解剖对照"
+            "对比记忆"
           ],
-          "enabled": true
+          "enabled": true,
+          "link": "",
+          "linkText": "查看详情"
         }
       ]
     },
@@ -74,29 +82,33 @@
       "announcements": [
         {
           "id": "dia-10-001",
-          "title": "简答题资料",
-          "content": "暂无",
+          "title": "简答题：湿啰音的听诊特点",
+          "content": "断续而短暂，多见于吸气时，部位较恒定，性质不易变，咳嗽后可减轻或消失。",
           "publishedAt": "2026-06-06",
           "pinned": true,
           "tags": [
-            "技能操做",
-            "体格检查"
+            "技能操作",
+            "肺部听诊"
           ],
-          "enabled": true
+          "enabled": true,
+          "link": "",
+          "linkText": "查看详情"
         },
         {
           "id": "dia-10-002",
-          "title": "论述题资料",
-          "content": "暂无",
+          "title": "论述题：典型心肌梗死的心电图演变",
+          "content": "描述超急性期（T波高尖）、急性期（ST段弓背向上抬高）、亚急性期及慢性期的图形动态变化特征。",
           "publishedAt": "2026-06-04",
           "pinned": false,
           "tags": [
             "心电图",
             "影像诊断"
           ],
-          "enabled": true
+          "enabled": true,
+          "link": "",
+          "linkText": "查看详情"
         }
       ]
-    },
+    }
   ]
 }

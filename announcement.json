@@ -1,0 +1,21 @@
+{
+  "updatedAt": "2026-06-08T12:00:00+08:00",
+  "items": [
+    {
+      "id": "notice-001",
+      "title": "欢迎使用 MemoryForge 智能背诵题库 v5.1",
+      "content": "公告系统已正常运行！\n以后只需要修改这个 announcement.json 文件，就能实时更新公告内容。",
+      "enabled": true,
+      "link": "",
+      "linkText": "查看详情"
+    },
+    {
+      "id": "notice-002",
+      "title": "使用小贴士",
+      "content": "题库数据保存在浏览器本地，不会上传到服务器。\n建议定期导出题库备份。",
+      "enabled": true,
+      "link": "",
+      "linkText": "了解更多"
+    }
+  ]
+}

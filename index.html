@@ -184,8 +184,8 @@
             </div>
             <div class="space"></div>
             <div class="dropzone">
-              <input id="fileInput" type="file" multiple accept=".pdf,.docx,.txt,.md" />
-              <div class="help" style="margin-top:8px">支持 PDF、DOCX、TXT、MD。先按序号分题，再仅取第一段为题目；答案标记、后续段落和明显答案行会放入预存答案。</div>
+              <input id="fileInput" type="file" multiple accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg,.webp,.bmp" />
+              <div class="help" style="margin-top:8px">支持 PDF、DOCX、TXT、MD；勾选 OCR 后可识别图片和扫描版 PDF。先按序号分题，再仅取第一段为题目；答案标记、后续段落和明显答案行会放入预存答案。</div>
             </div>
             <div class="space"></div>
             <div class="field">
@@ -197,7 +197,19 @@
                 <label class="check-pill"><input id="modeSemanticLine" type="checkbox" checked><span><b>答案起始词判断</b><br><span class="muted">仅根据“因为、因此、首先”等答案起始词判断，不再隐含使用标点</span></span></label>
                 <label class="check-pill"><input id="modePunctuation" type="checkbox"><span><b>题末标点截断</b><br><span class="muted">仅在开启本项后，按下方已勾选标点结束题目</span></span></label>
                 <label class="check-pill"><input id="modeFirstLine" type="checkbox" checked><span><b>首行保守模式</b><br><span class="muted">其他已勾选方式均无法判断时，只取第一物理行作为题目</span></span></label>
+                <label class="check-pill"><input id="modeOcr" type="checkbox"><span><b>OCR 扫描件识别（选配）</b><br><span class="muted">图片文件直接 OCR；扫描版 PDF 在文本层过少时自动 OCR，首次加载较慢</span></span></label>
               </div>
+            </div>
+            <div class="space"></div>
+            <div class="field">
+              <label>OCR 语言</label>
+              <select id="ocrLanguage" class="select">
+                <option value="chi_sim+eng" selected>简体中文 + 英文</option>
+                <option value="chi_sim">仅简体中文</option>
+                <option value="eng">仅英文</option>
+              </select>
+              <div class="help">OCR 在当前浏览器本地运行，不上传文件；首次使用会下载识别组件和语言包，速度取决于网络与设备性能。</div>
+              <div id="ocrStatus" class="help"></div>
             </div>
             <div class="space"></div>
             <div class="field">
@@ -404,7 +416,11 @@ const APP_CONFIG = {
   // 部署网页时，把 announcement.json 与本 HTML 放在同一目录即可。
   // 也可以改成完整公网地址，例如：https://example.com/announcement.json
   announcementUrl: "./announcement.json",
-  announcementPollMs: 60000
+  announcementPollMs: 60000,
+  tesseractScriptUrl: "https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/tesseract.min.js",
+  pdfOcrMinTextChars: 30,
+  pdfOcrRenderScale: 2,
+  pdfOcrMaxCanvasSide: 2400
 };
 
 const PDF_BOLD_START="\uE000";
@@ -442,6 +458,7 @@ let dbPromise = null;
 let announcementData = {updatedAt:"",subjects:[]};
 let activeAnnouncementSubject = "__all__";
 let announcementSearchQuery = "";
+let ocrWorkerState = {worker:null,language:"",loading:null};
 
 function uid(prefix="id"){
   return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2,9);
@@ -567,6 +584,8 @@ function getParseOptions(){
     useSemanticLine:Boolean(document.getElementById("modeSemanticLine")?.checked),
     usePunctuation:Boolean(document.getElementById("modePunctuation")?.checked),
     useFirstLine:Boolean(document.getElementById("modeFirstLine")?.checked),
+    useOcr:Boolean(document.getElementById("modeOcr")?.checked),
+    ocrLanguage:String(document.getElementById("ocrLanguage")?.value||"chi_sim+eng"),
     endChars:[...new Set([...checkedChars,...customChars])]
   };
 }
@@ -870,6 +889,11 @@ async function parseSelectedFiles(){
   if(!files.length){alert("请先选择文件。");return;}
   const options=getParseOptions();
   if(!validateParseOptions(options))return;
+  const unsupportedOcrFiles=files.filter(file=>isImageFile(file) && !options.useOcr);
+  if(unsupportedOcrFiles.length){
+    alert("图片文件需要先勾选“OCR 扫描件识别（选配）”。");
+    return;
+  }
   let added=0;
   for(const file of files){
     try{
@@ -886,8 +910,20 @@ async function parseSelectedFiles(){
           text=String(pdfText||"");
           parseText=text;
         }
+        if(options.useOcr && shouldOcrPdfText(text)){
+          updateOcrStatus(`正在 OCR 扫描版 PDF：${file.name}`);
+          const ocrText=await extractPdfOcrText(file,options);
+          if(ocrText.trim()){
+            text=ocrText;
+            parseText=ocrText;
+          }
+        }
       }
       else if(lower.endsWith(".docx")){text=await extractDocxText(file);parseText=text;}
+      else if(isImageFile(file)){
+        text=await extractImageOcrText(file,options);
+        parseText=text;
+      }
       else{text=await file.text();parseText=text;}
 
       const record={id:sourceId,name:file.name,type:file.type||guessMime(lower),size:file.size,text,blob:file,createdAt:new Date().toISOString()};
@@ -902,6 +938,8 @@ async function parseSelectedFiles(){
     }
   }
   input.value="";
+  if(options.useOcr)await releaseOcrWorker();
+  updateOcrStatus("");
   renderDraft();
   alert(`已加入 ${added} 道题。请在暂存区检查题目与答案后再保存。`);
 }
@@ -1009,9 +1047,120 @@ function isPdfTextItemBold(item,styles){
   return /bold|black|heavy|semibold|semi-bold|demibold|demi-bold|extrabold|extra-bold|粗|黑体|heiti/i.test(fontInfo);
 }
 
+function isImageFile(file){
+  const name=String(file?.name||"").toLowerCase();
+  return /^image\//.test(file?.type||"") || /\.(png|jpe?g|webp|bmp)$/i.test(name);
+}
+function shouldOcrPdfText(text){
+  return stripPdfBoldMarkers(String(text||"")).replace(/\s/g,"").length<APP_CONFIG.pdfOcrMinTextChars;
+}
+function updateOcrStatus(message=""){
+  const el=document.getElementById("ocrStatus");
+  if(el)el.textContent=message;
+}
+function loadScriptOnce(src){
+  return new Promise((resolve,reject)=>{
+    const existing=[...document.scripts].find(script=>script.src===src);
+    if(existing){
+      if(existing.dataset.loaded==="true")resolve();
+      else{
+        existing.addEventListener("load",()=>resolve(),{once:true});
+        existing.addEventListener("error",()=>reject(new Error("OCR 组件加载失败")),{once:true});
+      }
+      return;
+    }
+    const script=document.createElement("script");
+    script.src=src;
+    script.async=true;
+    script.onload=()=>{script.dataset.loaded="true";resolve();};
+    script.onerror=()=>reject(new Error("OCR 组件加载失败，请检查网络后重试。"));
+    document.head.appendChild(script);
+  });
+}
+async function getOcrWorker(options){
+  const language=String(options?.ocrLanguage||"chi_sim+eng");
+  if(ocrWorkerState.worker && ocrWorkerState.language===language)return ocrWorkerState.worker;
+  if(ocrWorkerState.loading)return ocrWorkerState.loading;
+  ocrWorkerState.loading=(async()=>{
+    updateOcrStatus("正在加载 OCR 组件和语言包，首次使用可能较慢…");
+    if(ocrWorkerState.worker){
+      try{await ocrWorkerState.worker.terminate();}catch(e){}
+      ocrWorkerState.worker=null;
+    }
+    await loadScriptOnce(APP_CONFIG.tesseractScriptUrl);
+    if(!window.Tesseract?.createWorker)throw new Error("OCR 组件不可用。");
+    const worker=await Tesseract.createWorker(language, 1, {
+      logger: progress=>{
+        if(progress?.status){
+          const pct=Number.isFinite(progress.progress)?` ${Math.round(progress.progress*100)}%`:"";
+          updateOcrStatus(`OCR：${progress.status}${pct}`);
+        }
+      }
+    });
+    ocrWorkerState.worker=worker;
+    ocrWorkerState.language=language;
+    updateOcrStatus("OCR 已就绪。");
+    return worker;
+  })();
+  try{
+    return await ocrWorkerState.loading;
+  }finally{
+    ocrWorkerState.loading=null;
+  }
+}
+async function releaseOcrWorker(){
+  if(!ocrWorkerState.worker)return;
+  try{
+    await ocrWorkerState.worker.terminate();
+  }catch(e){
+    console.warn("OCR worker terminate failed:",e);
+  }finally{
+    ocrWorkerState={worker:null,language:"",loading:null};
+  }
+}
+async function extractImageOcrText(file,options){
+  updateOcrStatus(`正在 OCR 图片：${file.name}`);
+  const worker=await getOcrWorker(options);
+  const result=await worker.recognize(file);
+  return normalizeOcrText(result?.data?.text||"");
+}
+async function extractPdfOcrText(file,options){
+  if(!window.pdfjsLib) throw new Error("PDF 解析组件未加载，请检查网络。");
+  const worker=await getOcrWorker(options);
+  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+  const pages=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    updateOcrStatus(`正在 OCR 扫描版 PDF：${file.name}（${p}/${pdf.numPages}）`);
+    const page=await pdf.getPage(p);
+    const viewport=scaledPdfViewport(page);
+    const canvas=document.createElement("canvas");
+    canvas.width=Math.ceil(viewport.width);
+    canvas.height=Math.ceil(viewport.height);
+    const context=canvas.getContext("2d");
+    await page.render({canvasContext:context,viewport}).promise;
+    const result=await worker.recognize(canvas);
+    pages.push(normalizeOcrText(result?.data?.text||""));
+  }
+  return pages.join("\n\n");
+}
+function scaledPdfViewport(page){
+  const base=page.getViewport({scale:APP_CONFIG.pdfOcrRenderScale});
+  const maxSide=Math.max(base.width,base.height);
+  if(maxSide<=APP_CONFIG.pdfOcrMaxCanvasSide)return base;
+  return page.getViewport({scale:APP_CONFIG.pdfOcrRenderScale*APP_CONFIG.pdfOcrMaxCanvasSide/maxSide});
+}
+function normalizeOcrText(text){
+  return String(text||"")
+    .replace(/\r\n?/g,"\n")
+    .replace(/[ \t]+\n/g,"\n")
+    .replace(/\n{3,}/g,"\n\n")
+    .trim();
+}
 function guessMime(name){
   if(name.endsWith(".pdf"))return"application/pdf";
   if(name.endsWith(".docx"))return"application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  if(/\.(png|jpe?g|webp|bmp)$/i.test(name))return"image/"+(name.split(".").pop()||"").replace("jpg","jpeg");
   return"text/plain";
 }
 
